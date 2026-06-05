@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>L1 Engineer Dashboard</title>
+</head>
+<body>
+
+<h1>Welcome, {{username}}!</h1>
+<h2>L1 Engineer Dashboard</h2>
+
+<a href="/logout"></a>
+    <button >logout</button>
+
+<h2>Assigned Tickets</h2>
+
+<table border="1">
+
+<tr>
+    <th>ID</th>
+    <th>Title</th>
+    <th>Description</th>
+    <th>Status</th>
+    <th>Action</th>
+</tr>
+
+{% for ticket in tickets %}
+<tr>
+
+    <td>{{ticket.ticket_id}}</td>
+    <td>{{ticket.title}}</td>
+    <td>{{ticket.description}}</td>
+    <td>{{ticket.status}}</td>
+
+    <td>
+
+        <form action="/update-ticket" method="POST">
+
+            <input type="hidden"
+                   name="ticket_id"
+                   value="{{ticket.ticket_id}}">
+
+            <select name="action">
+
+                <option value="">Select Action</option>
+
+                <option value="In Progress">
+                    Mark In Progress
+                </option>
+
+                <option value="Resolved">
+                    Resolve Ticket
+                </option>
+
+                <option value="Escalate">
+                    Escalate to L2
+                </option>
+
+            </select>
+
+            <button type="submit">
+                Confirm
+            </button>
+
+        </form>
+
+    </td>
+
+</tr>
+{% endfor %}
+
+</table>
+
+</body>
+</html>

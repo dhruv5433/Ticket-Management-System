@@ -5,15 +5,49 @@
 </head>
 <body>
 
-<h1>Welcome, Dhruv</h1>
+    <h1>Welcome, {{username}}</h1>
 
-<a href="/create-ticket">
-    Create Ticket
-</a>
+    <a href="/logout">
+        <button>Logout</button>
+    </a>
 
-<h2>My Tickets</h2>
+    <a href="/create-ticket">
+        <button>Create Ticket</button>
+    </a>
 
-<p>No tickets created yet.</p>
+    <h2>My Tickets</h2>
+
+    {% if tickets %}
+
+    <table border="1">
+
+        <tr>
+            <th>Ticket ID</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Assigned Level</th>
+            <th>Created By</th>
+        </tr>
+
+        {% for ticket in tickets %}
+        <tr>
+            <td>{{ticket.ticket_id}}</td>
+            <td>{{ticket.title}}</td>
+            <td>{{ticket.description}}</td>
+            <td>{{ticket.status}}</td>
+            <td>{{ticket.assigned_level}}</td>
+            <td>{{ticket.created_by}}</td>
+        </tr>
+        {% endfor %}
+
+    </table>
+
+    {% else %}
+
+    <p>No tickets created yet.</p>
+
+    {% endif %}
 
 </body>
 </html>

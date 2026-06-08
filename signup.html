@@ -1,33 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Sign Up</title>
+    <title>Create Account</title>
 </head>
 <body>
 
-    <h1>Create Account</h1>
+<h1>Create Account</h1>
 
-    <form action="/register" method="POST">
+<form action="/register" method="POST">
 
-        <label>Name</label><br>
-        <input type="text" name="name" required><br><br>
+    <label>First Name</label><br>
+    <input type="text" name="first_name" required><br><br>
 
-        <label>Email</label><br>
-        <input type="email" name="email" required><br><br>
+    <label>Last Name</label><br>
+    <input type="text" name="last_name" required><br><br>
 
-        <label>Password</label><br>
-        <input type="password" name="password" required><br><br>
+    <label>Employee ID</label><br>
+    <input type="text" name="employee_id" required><br><br>
 
-        <label>Confirm Password</label><br>
-        <input type="password" name="confirm_password" required><br><br>
+    <label>Email</label><br>
+    <input type="email" name="email" required><br><br>
 
-        <button type="submit">Sign Up</button>
+    <label>Phone Number</label><br>
+    <input type="text" name="phone_number" required><br><br>
 
-    </form>
+    <label>Password</label><br>
+    <input type="password" name="password" required><br><br>
 
-    <br>
+    <label>Confirm Password</label><br>
+    <input type="password" name="confirm_password" required><br><br>
 
-    <a href="/">Back to Login</a>
+    <button type="submit">Create Account</button>
+
+</form>
+
+<br>
+
+<a href="/"><button type="button">Back to Login</button></a>
 
 </body>
 </html>

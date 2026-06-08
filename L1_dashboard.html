@@ -8,60 +8,43 @@
 <h1>Welcome, {{username}}!</h1>
 <h2>L1 Engineer Dashboard</h2>
 
-<a href="/logout"></a>
-    <button >logout</button>
+<a href="/logout">
+    <button type ="button" >logout</button>
+</a>
 
 <h2>Assigned Tickets</h2>
 
 <table border="1">
 
 <tr>
-    <th>ID</th>
+    <th>Ticket Code</th>
     <th>Title</th>
-    <th>Description</th>
     <th>Status</th>
-    <th>Action</th>
+    <th>view</th>
 </tr>
 
 {% for ticket in tickets %}
 <tr>
 
-    <td>{{ticket.ticket_id}}</td>
+    <td>TKT-{{ "%04d"|format(ticket[0]) }}</td>
     <td>{{ticket.title}}</td>
-    <td>{{ticket.description}}</td>
     <td>{{ticket.status}}</td>
 
     <td>
 
-        <form action="/update-ticket" method="POST">
+      <form action="/view-ticket" method="POST">
 
-            <input type="hidden"
-                   name="ticket_id"
-                   value="{{ticket.ticket_id}}">
+        <input type="hidden"
+               name="ticket_id"
+               value="{{ticket.ticket_id}}">
 
-            <select name="action">
+        <button type="submit">
+            View
+        </button>
 
-                <option value="">Select Action</option>
+      </form>
 
-                <option value="In Progress">
-                    Mark In Progress
-                </option>
 
-                <option value="Resolved">
-                    Resolve Ticket
-                </option>
-
-                <option value="Escalate">
-                    Escalate to L2
-                </option>
-
-            </select>
-
-            <button type="submit">
-                Confirm
-            </button>
-
-        </form>
 
     </td>
 
@@ -69,6 +52,147 @@
 {% endfor %}
 
 </table>
+
+{% if selected_ticket %}
+
+<hr>
+
+<h2>Ticket Details</h2>
+
+<p>
+    <b>Ticket Code:</b>
+    TKT-{{ "%04d"|format(selected_ticket.ticket_id) }}
+</p>
+
+<p>
+    <b>Title:</b>
+    {{ selected_ticket.title }}
+</p>
+
+<p>
+    <b>Description:</b>
+    {{ selected_ticket.description }}
+</p>
+
+<p>
+    <b>Status:</b>
+    {{ selected_ticket.status }}
+</p>
+
+<hr>
+
+<h3>User Information</h3>
+
+<p>
+    <b>Name:</b>
+    {{ ticket_user.first_name }}
+    {{ ticket_user.last_name }}
+</p>
+
+<p>
+    <b>Employee ID:</b>
+    {{ ticket_user.employee_id }}
+</p>
+
+<p>
+    <b>Email:</b>
+    {{ ticket_user.email }}
+</p>
+
+<p>
+    <b>Phone Number:</b>
+    {{ ticket_user.phone_number }}
+</p>
+
+<hr>
+
+<h3>Comments</h3>
+
+<form action="/add-comment" method="POST">
+
+    <input type="hidden"
+           name="ticket_id"
+           value="{{ selected_ticket.ticket_id }}">
+
+    <textarea
+        name="comment"
+        rows="4"
+        cols="50"
+        placeholder="Write your comment here..."
+        required>
+    </textarea>
+    <br>
+
+   
+
+{% for comment in comments %}
+
+<p>
+<b>
+    {{ comment.first_name }}
+    {{ comment.last_name }}
+    ({{ comment.comment_by_role }})
+</b>
+
+<small>
+    {{ comment.comment_date }}
+</small>
+
+<p>
+    {{ comment.comment }}
+</p>
+
+{% endfor %}
+
+    <br>
+
+    <button type="submit">
+        Add Comment
+    </button>
+
+</form>
+
+<h3>Ticket Actions</h3>
+
+<form action="/update-ticket" method="POST">
+
+    <input type="hidden"
+           name="ticket_id"
+           value="{{ selected_ticket.ticket_id }}">
+
+    <select name="action">
+
+        <option value="">
+            Select Action
+        </option>
+
+        <option value="In Progress">
+            Mark In Progress
+        </option>
+
+        <option value="Resolved">
+            Resolve Ticket
+        </option>
+
+        <option value="Escalate">
+            Escalate to L2
+        </option>
+
+    </select>
+
+    <button type="submit">
+        Confirm
+    </button>
+
+</form>
+<br>    
+<a href="/l1-dashboard">
+    <button type="button">
+        Hide Details
+    </button>
+</a>
+
+{% endif %}
 
 </body>
 </html>

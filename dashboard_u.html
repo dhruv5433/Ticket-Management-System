@@ -5,14 +5,14 @@
 </head>
 <body>
 
-    <h1>Welcome, {{username}}</h1>
+    <h1>Welcome, {{ username }}!</h1>
 
     <a href="/logout">
-        <button>Logout</button>
+        <button type="button">Logout</button>
     </a>
 
     <a href="/create-ticket">
-        <button>Create Ticket</button>
+        <button type="button">Create Ticket</button>
     </a>
 
     <h2>My Tickets</h2>
@@ -22,23 +22,47 @@
     <table border="1">
 
         <tr>
-            <th>Ticket ID</th>
+            <th>Ticket Code</th>
             <th>Title</th>
-            <th>Description</th>
             <th>Status</th>
-            <th>Assigned Level</th>
-            <th>Created By</th>
+            <th>View</th>
         </tr>
 
         {% for ticket in tickets %}
+
         <tr>
-            <td>{{ticket.ticket_id}}</td>
-            <td>{{ticket.title}}</td>
-            <td>{{ticket.description}}</td>
-            <td>{{ticket.status}}</td>
-            <td>{{ticket.assigned_level}}</td>
-            <td>{{ticket.created_by}}</td>
+
+            <td>
+                TKT-{{ "%04d"|format(ticket.ticket_id) }}
+            </td>
+
+            <td>
+                {{ ticket.title }}
+            </td>
+
+            <td>
+                {{ ticket.status }}
+            </td>
+
+            <td>
+
+                <form action="/view-user-ticket" method="POST">
+
+                    <input
+                        type="hidden"
+                        name="ticket_id"
+                        value="{{ ticket.ticket_id }}">
+
+                    <button type="submit">
+                        View
+                    </button>
+
+                </form>
+
+            </td>
+
         </tr>
+
         {% endfor %}
 
     </table>
@@ -46,6 +70,96 @@
     {% else %}
 
     <p>No tickets created yet.</p>
+
+    {% endif %}
+
+
+    {% if selected_ticket %}
+
+    <hr>
+
+    <h2>Ticket Details</h2>
+
+    <p>
+        <b>Ticket Code:</b>
+        TKT-{{ "%04d"|format(selected_ticket.ticket_id) }}
+    </p>
+
+    <p>
+        <b>Title:</b>
+        {{ selected_ticket.title }}
+    </p>
+
+    <p>
+        <b>Status:</b>
+        {{ selected_ticket.status }}
+    </p>
+
+    <p>
+        <b>Description:</b>
+        {{ selected_ticket.description }}
+    </p>
+
+    <hr>
+
+    <h3>Comments</h3>
+
+    {% if comments %}
+
+        {% for comment in comments %}
+
+            <p>
+                <b>
+                    {{ comment.first_name }}
+                    {{ comment.last_name }}
+                    ({{ comment.comment_by_role }})
+                </b>
+                -
+                <small>{{ comment.comment_date }}</small>
+            </p>
+
+            <p>
+                {{ comment.comment }}
+            </p>
+
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>No comments yet.</p>
+
+    {% endif %}
+
+    <h3>Add Comment</h3>
+
+<form action="/add-comment" method="POST">
+
+    <input type="hidden"
+           name="ticket_id"
+           value="{{ selected_ticket.ticket_id }}">
+
+    <textarea
+        name="comment"
+        rows="4"
+        cols="50"
+        placeholder="Write your comment here..."
+        required>
+    </textarea>
+
+    <br><br>
+
+    <button type="submit">
+        Add Comment
+    </button>
+
+</form>
+<br>
+    <a href="/dashboard">
+        <button type="button">
+            Hide Details
+        </button>
+    </a>
 
     {% endif %}
 

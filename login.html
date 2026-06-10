@@ -2,26 +2,20 @@
 <html>
 <head>
     <title>Ticket Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-
-    <h1>Ticket Management System</h1>
-
-    <form action="/login" method="POST">
-
-        <label>Employee ID:</label><br>
-        <input type="text" name="employee_id" placeholder="Enter your employee ID"><br><br>
-
-        <label>Password:</label><br>
-        <input type="password" name="password" placeholder="Enter your password"><br><br>
-
-        <button type="submit">Login</button>
-
-        <br><br>
-
-<a href="/signup"><button type="button">Create New Account</button></a>
-
-    </form>
-
+    <div class="auth-card">
+        <h1>Ticket Management System</h1>
+        <form action="/login" method="POST">
+            <label>Employee ID:</label><br>
+            <input type="text" name="employee_id" placeholder="Enter your employee ID"><br><br>
+            <label>Password:</label><br>
+            <input type="password" name="password" placeholder="Enter your password"><br><br>
+            <button type="submit">Login</button>
+            <br><br>
+            <a href="/signup"><button type="button">Create New Account</button></a>
+        </form>
+    </div>
 </body>
 </html>

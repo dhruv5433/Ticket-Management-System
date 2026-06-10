@@ -1,10 +1,13 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 import sqlite3
 from datetime import datetime
+import os
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
 app.secret_key = 'ticket_management_system'
+
 
 @app.route('/')
 def home():
@@ -58,21 +61,39 @@ def login():
 def create_ticket():
     return render_template('create_ticket.html')
 
-    
 @app.route('/submit_ticket', methods=['POST'])
 def submit_ticket():
 
     title = request.form['title']
     description = request.form['description']
 
+    attachment = request.files.get('attachment')
+
+    filename = None
+
+    if attachment and attachment.filename != "":
+
+        filename = secure_filename(
+            attachment.filename
+        )
+
+        attachment.save(
+            os.path.join(
+                "uploads",
+                filename
+            )
+        )
+
     conn = sqlite3.connect('ticketing.db')
     cursor = conn.cursor()
 
-  
-    cursor.execute("SELECT COUNT(*) FROM tickets")
+    cursor.execute(
+        "SELECT COUNT(*) FROM tickets"
+    )
+
     ticket_count = cursor.fetchone()[0]
 
-    l1_engineers = [6, 7, 8]  
+    l1_engineers = [6, 7, 8]
 
     assigned_to = l1_engineers[
         ticket_count % len(l1_engineers)
@@ -80,8 +101,17 @@ def submit_ticket():
 
     cursor.execute("""
     INSERT INTO tickets
-    (title, description, status, assigned_level, assigned_to, created_by, ticket_code)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    (
+        title,
+        description,
+        status,
+        assigned_level,
+        assigned_to,
+        created_by,
+        ticket_code,
+        attachment
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     """,
     (
         title,
@@ -90,13 +120,15 @@ def submit_ticket():
         'L1',
         assigned_to,
         session['user_id'],
-        f"TKT-{ticket_count + 1:04d}"
+        f"TKT-{ticket_count + 1:04d}",
+        filename
     ))
 
     conn.commit()
     conn.close()
 
     return redirect('/dashboard')
+
 
 from datetime import datetime
 
@@ -194,12 +226,28 @@ def dashboard():
 
     tickets = cursor.fetchall()
 
+    my_tickets_count = len(tickets)
+
+    open_count = 0
+    resolved_count = 0
+
+    for ticket in tickets:
+
+        if ticket['status'] not in ['Resolved', 'Closed']:
+            open_count += 1
+
+        if ticket['status'] == 'Resolved':
+            resolved_count += 1
+
     conn.close()
 
     return render_template(
         'dashboard_u.html',
         username=session['username'],
-        tickets=tickets
+        tickets=tickets,
+        my_tickets_count=my_tickets_count,
+        open_count=open_count,
+        resolved_count=resolved_count
     )
 
 @app.route('/logout')
@@ -225,12 +273,27 @@ def l1_dashboard():
 
     tickets = cursor.fetchall()
 
+    assigned_count = len(tickets)
+
+    pending_count = 0
+    resolved_count = 0
+
+    for ticket in tickets:
+        if ticket['status'] in ['Open', 'In Progress', 'Pending User Response', 'Escalated to L2']:
+            pending_count += 1
+
+        if ticket['status'] == 'Resolved':
+            resolved_count += 1
+
     conn.close()
 
     return render_template(
         'l1_dashboard.html',
         username=session['username'],
-        tickets=tickets
+        tickets=tickets,
+        assigned_count=assigned_count,
+        pending_count=pending_count,
+        resolved_count=resolved_count
     )
 
 @app.route('/update-ticket', methods=['POST'])
@@ -253,6 +316,17 @@ def update_ticket():
             (ticket_id,)
         )
 
+    elif action == "Pending User Response":
+
+        cursor.execute(
+            """
+            UPDATE tickets
+            SET status='Pending User Response'
+            WHERE ticket_id=?
+            """,
+            (ticket_id,)
+        )
+
     elif action == "Resolved":
 
         cursor.execute(
@@ -264,13 +338,24 @@ def update_ticket():
             (ticket_id,)
         )
 
-    elif action == "Escalate":
+    elif action == "Closed":
+
+        cursor.execute(
+            """
+            UPDATE tickets
+            SET status='Closed'
+            WHERE ticket_id=?
+            """,
+            (ticket_id,)
+        )
+
+    elif action == "Escalated to L2":
 
         cursor.execute(
             """
             UPDATE tickets
             SET assigned_level='L2',
-                status='Escalated'
+                status='Escalated to L2'
             WHERE ticket_id=?
             """,
             (ticket_id,)
@@ -347,6 +432,18 @@ def view_ticket():
 
     ticket_user = cursor.fetchone()
 
+    assigned_count = len(tickets)
+
+    pending_count = 0
+    resolved_count = 0
+
+    for ticket in tickets:
+        if ticket['status'] in ['Open', 'In Progress', 'Pending User Response', 'Escalated to L2']:
+            pending_count += 1
+
+        if ticket['status'] == 'Resolved':
+            resolved_count += 1
+
     conn.close()
 
     return render_template(
@@ -354,8 +451,11 @@ def view_ticket():
         username=session['username'],
         tickets=tickets,
         selected_ticket=selected_ticket,
+        comments=comments,
         ticket_user=ticket_user,
-        comments=comments
+        assigned_count=assigned_count,
+        pending_count=pending_count,
+        resolved_count=resolved_count
     )
 
 @app.route('/add-comment', methods=['POST'])
@@ -446,6 +546,20 @@ def view_user_ticket():
 
     tickets = cursor.fetchall()
 
+    my_tickets_count = len(tickets)
+
+    open_count = 0
+    resolved_count = 0
+
+    for ticket in tickets:
+
+        if ticket['status'] not in ['Resolved', 'Closed']:
+            open_count += 1
+
+        if ticket['status'] == 'Resolved':
+            resolved_count += 1
+
+
     conn.close()
 
     return render_template(
@@ -453,7 +567,10 @@ def view_user_ticket():
         username=session['username'],
         tickets=tickets,
         selected_ticket=selected_ticket,
-        comments=comments
+        comments=comments,
+        my_tickets_count=my_tickets_count,
+        open_count=open_count,
+        resolved_count=resolved_count
     )
 
 if __name__ == '__main__':

@@ -2,22 +2,60 @@
 <html>
 <head>
     <title>Create Ticket</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 </head>
 <body>
 
-<h1>Create Ticket</h1>
 
-<form action="/submit_ticket" method="POST">
+<div class="sidebar">
+    <div class="sidebar-brand">T</div>
 
-    <label>Title:</label><br>
-    <input type="text" name="title" required><br><br>
+    <a href="/dashboard" class="sidebar-link" data-tip="Dashboard">
+        <i class="ti ti-layout-dashboard"></i>
+    </a>
 
-    <label>Description:</label><br>
-    <textarea name="description" required></textarea><br><br>
+    <a href="/dashboard" class="sidebar-link" data-tip="My Tickets">
+        <i class="ti ti-ticket"></i>
+    </a>
 
-    <button type="submit">Submit Ticket</button>
+    <a href="/create-ticket" class="sidebar-link active" data-tip="Create Ticket">
+        <i class="ti ti-plus"></i>
+    </a>
 
-</form>
+    <div class="sidebar-spacer"></div>
+
+    <a href="/logout" class="sidebar-logout" data-tip="Logout">
+        <i class="ti ti-logout"></i>
+    </a>
+</div>
+
+
+<div class="page-wrap">
+<div class="container">
+
+    <div class="topbar">
+        <div>
+            <h1>Create Ticket</h1>
+            <p>Submit a new support request</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <form action="/submit_ticket" method="POST" enctype="multipart/form-data">
+            <label>Title:</label><br>
+            <input type="text" name="title" required><br><br>
+            <label>Description:</label><br>
+            <textarea name="description" required></textarea><br><br>
+            <label>Attachments:</label><br>
+            <input type="file" name="attachment" accept=".jpg,.jpeg,.png,.pdf">
+            <br><br>
+            <button type="submit">Submit Ticket</button>
+        </form>
+    </div>
+
+</div>
+</div>
 
 </body>
 </html>

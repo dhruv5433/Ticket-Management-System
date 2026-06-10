@@ -2,197 +2,206 @@
 <html>
 <head>
     <title>L1 Engineer Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 </head>
 <body>
 
-<h1>Welcome, {{username}}!</h1>
-<h2>L1 Engineer Dashboard</h2>
+<div class="sidebar">
+    <div class="sidebar-brand">T</div>
 
-<a href="/logout">
-    <button type ="button" >logout</button>
-</a>
+    <a href="/l1-dashboard" class="sidebar-link active" data-tip="Dashboard">
+        <i class="ti ti-layout-dashboard"></i>
+    </a>
 
+    <a href="/l1-dashboard" class="sidebar-link" data-tip="Tickets">
+        <i class="ti ti-ticket"></i>
+    </a>
+
+    <a href="#" class="sidebar-link" data-tip="Users">
+        <i class="ti ti-users"></i>
+    </a>
+
+    <a href="#" class="sidebar-link" data-tip="Reports">
+        <i class="ti ti-chart-bar"></i>
+    </a>
+
+    <div class="sidebar-spacer"></div>
+
+    <a href="/logout" class="sidebar-logout" data-tip="Logout">
+        <i class="ti ti-logout"></i>
+    </a>
+</div>
+
+
+<div class="page-wrap">
+<div class="container">
+
+<div class="topbar">
+    <div>
+        <h1>L1 Dashboard</h1>
+        <p>Welcome, {{username}}</p>
+    </div>
+</div>
+
+<div class="stats-container">
+    <div class="stat-card">
+        <p>Assigned</p>
+        <h2>{{ assigned_count }}</h2>
+    </div>
+    <div class="stat-card">
+        <p>Pending</p>
+        <h2>{{ pending_count }}</h2>
+    </div>
+    <div class="stat-card">
+        <p>Resolved</p>
+        <h2>{{ resolved_count }}</h2>
+    </div>
+</div>
+
+<div class="card">
 <h2>Assigned Tickets</h2>
 
-<table border="1">
-
+<table>
 <tr>
     <th>Ticket Code</th>
     <th>Title</th>
     <th>Status</th>
-    <th>view</th>
+    <th>View</th>
 </tr>
 
 {% for ticket in tickets %}
-<tr>
-
+<tr class="{% if ticket.status == 'Open' %}ticket-open
+{% elif ticket.status == 'Pending User Response' %}ticket-pending
+{% elif ticket.status == 'In Progress' %}ticket-in-progress
+{% elif ticket.status == 'Resolved' %}ticket-resolved
+{% elif ticket.status == 'Closed' %}ticket-closed
+{% endif %}">
     <td>TKT-{{ "%04d"|format(ticket[0]) }}</td>
     <td>{{ticket.title}}</td>
-    <td>{{ticket.status}}</td>
-
     <td>
 
+{% if ticket.status == 'Open' %}
+
+<span class="status-open">
+    OPEN
+</span>
+
+{% elif ticket.status == 'Pending User Response' %}
+
+<span class="status-pending">
+    PENDING
+</span>
+
+{% elif ticket.status == 'In Progress' %}
+
+<span class="status-progress">
+    IN PROGRESS
+</span>
+
+{% elif ticket.status == 'Resolved' %}
+
+<span class="status-resolved">
+    RESOLVED
+</span>
+
+{% elif ticket.status == 'Closed' %}
+
+<span class="status-closed">
+    CLOSED
+</span>
+
+{% endif %}
+
+</td>
+    <td>
       <form action="/view-ticket" method="POST">
-
-        <input type="hidden"
-               name="ticket_id"
-               value="{{ticket.ticket_id}}">
-
-        <button type="submit">
-            View
-        </button>
-
+        <input type="hidden" name="ticket_id" value="{{ticket.ticket_id}}">
+        <button type="submit">View</button>
       </form>
-
-
-
     </td>
-
 </tr>
 {% endfor %}
 
 </table>
+</div>
+<br>
 
 {% if selected_ticket %}
 
-<hr>
+<button class="tab-btn" type="button" onclick="showTicket()">Ticket Details</button>
+<button class="tab-btn" type="button" onclick="showUser()">User Information</button>
+<button class="tab-btn" type="button" onclick="showComments()">Comments</button>
+<button class="tab-btn" type="button" onclick="showActions()">Actions</button>
 
+    
+<br><br>
+
+<div id="ticket-details">
 <h2>Ticket Details</h2>
+<p><b>Ticket Code:</b> TKT-{{ "%04d"|format(selected_ticket.ticket_id) }}</p>
+<p><b>Title:</b> {{ selected_ticket.title }}</p>
+<p><b>Description:</b> {{ selected_ticket.description }}</p>
+<p><b>Status:</b> {{ selected_ticket.status }}</p>
+</div>
 
-<p>
-    <b>Ticket Code:</b>
-    TKT-{{ "%04d"|format(selected_ticket.ticket_id) }}
-</p>
+<div id="user-info" style="display:none;">
+<h2>User Information</h2>
+<p><b>Name:</b> {{ ticket_user.first_name }} {{ ticket_user.last_name }}</p>
+<p><b>Employee ID:</b> {{ ticket_user.employee_id }}</p>
+<p><b>Email:</b> {{ ticket_user.email }}</p>
+<p><b>Phone Number:</b> {{ ticket_user.phone_number }}</p>
+</div>
 
-<p>
-    <b>Title:</b>
-    {{ selected_ticket.title }}
-</p>
-
-<p>
-    <b>Description:</b>
-    {{ selected_ticket.description }}
-</p>
-
-<p>
-    <b>Status:</b>
-    {{ selected_ticket.status }}
-</p>
-
-<hr>
-
-<h3>User Information</h3>
-
-<p>
-    <b>Name:</b>
-    {{ ticket_user.first_name }}
-    {{ ticket_user.last_name }}
-</p>
-
-<p>
-    <b>Employee ID:</b>
-    {{ ticket_user.employee_id }}
-</p>
-
-<p>
-    <b>Email:</b>
-    {{ ticket_user.email }}
-</p>
-
-<p>
-    <b>Phone Number:</b>
-    {{ ticket_user.phone_number }}
-</p>
-
-<hr>
-
-<h3>Comments</h3>
-
+<div id="comments-section" style="display:none;">
+<h2>Comments</h2>
 <form action="/add-comment" method="POST">
-
-    <input type="hidden"
-           name="ticket_id"
-           value="{{ selected_ticket.ticket_id }}">
-
-    <textarea
-        name="comment"
-        rows="4"
-        cols="50"
-        placeholder="Write your comment here..."
-        required>
-    </textarea>
-    <br>
-
-   
-
+    <input type="hidden" name="ticket_id" value="{{ selected_ticket.ticket_id }}">
+    <textarea name="comment" rows="4" cols="50" placeholder="Write your comment here..." required></textarea>
+    <br><br>
+    <button type="submit">Add Comment</button>
+</form>
+<br><br>
+<div class="comment-box">
 {% for comment in comments %}
-
-<p>
-<b>
-    {{ comment.first_name }}
-    {{ comment.last_name }}
-    ({{ comment.comment_by_role }})
-</b>
-
-<small>
-    {{ comment.comment_date }}
-</small>
-
-<p>
-    {{ comment.comment }}
-</p>
+<div class="comment-card">
+    <div class="comment-header">
+        <b>{{ comment.first_name }} {{ comment.last_name }} ({{ comment.comment_by_role }})</b>
+        <small>{{ comment.comment_date }}</small>
+    </div>
+    <div class="comment-body">{{ comment.comment }}</div>
+</div>
 
 {% endfor %}
 
-    <br>
 
-    <button type="submit">
-        Add Comment
-    </button>
-
-</form>
-
-<h3>Ticket Actions</h3>
-
+<div id="actions-section" style="display:none;">
+<h2>Ticket Actions</h2>
 <form action="/update-ticket" method="POST">
-
-    <input type="hidden"
-           name="ticket_id"
-           value="{{ selected_ticket.ticket_id }}">
-
+    <input type="hidden" name="ticket_id" value="{{ selected_ticket.ticket_id }}">
     <select name="action">
-
-        <option value="">
-            Select Action
-        </option>
-
-        <option value="In Progress">
-            Mark In Progress
-        </option>
-
-        <option value="Resolved">
-            Resolve Ticket
-        </option>
-
-        <option value="Escalate">
-            Escalate to L2
-        </option>
-
+        <option value="">Select Action</option>
+        <option value="In Progress">Mark In Progress</option>
+        <option value="Pending User Response">Pending User Response</option>
+        <option value="Resolved">Resolve Ticket</option>
+        <option value="Closed">Close Ticket</option>
+        <option value="Escalated to L2">Escalate to L2</option>
     </select>
-
-    <button type="submit">
-        Confirm
-    </button>
-
+    <br><br>
+    <button type="submit">Confirm Action</button>
 </form>
-<br>    
-<a href="/l1-dashboard">
-    <button type="button">
-        Hide Details
-    </button>
-</a>
+</div>
+    </div>
+</div>
+
+<br>
+<a href="/l1-dashboard"><button type="button">Hide Details</button></a>
 
 {% endif %}
 
+</div>
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

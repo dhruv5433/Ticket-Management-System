@@ -2,16 +2,14 @@
 <html>
 <head>
     <title>Account Created</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-
-    <h1>Account Created Successfully!</h1>
-
-    <p>You can now login using your credentials.</p>
-
-    <a href="/">
-        <button>Go to Login</button>
-    </a>
-
+    <div class="container">
+        <h1>Account Created Successfully!</h1>
+        <p>You can now login using your credentials.</p>
+        <br>
+        <a href="/"><button>Go to Login</button></a>
+    </div>
 </body>
 </html>

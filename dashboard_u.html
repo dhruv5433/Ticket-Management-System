@@ -2,166 +2,150 @@
 <html>
 <head>
     <title>User Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 </head>
 <body>
 
-    <h1>Welcome, {{ username }}!</h1>
 
-    <a href="/logout">
-        <button type="button">Logout</button>
+<div class="sidebar">
+    <div class="sidebar-brand">T</div>
+
+    <a href="/dashboard" class="sidebar-link active" data-tip="Dashboard">
+        <i class="ti ti-layout-dashboard"></i>
     </a>
 
-    <a href="/create-ticket">
-        <button type="button">Create Ticket</button>
+    <a href="/dashboard" class="sidebar-link" data-tip="My Tickets">
+        <i class="ti ti-ticket"></i>
     </a>
 
-    <h2>My Tickets</h2>
+    <a href="/create-ticket" class="sidebar-link" data-tip="Create Ticket">
+        <i class="ti ti-plus"></i>
+    </a>
 
-    {% if tickets %}
+    <div class="sidebar-spacer"></div>
 
-    <table border="1">
-
-        <tr>
-            <th>Ticket Code</th>
-            <th>Title</th>
-            <th>Status</th>
-            <th>View</th>
-        </tr>
-
-        {% for ticket in tickets %}
-
-        <tr>
-
-            <td>
-                TKT-{{ "%04d"|format(ticket.ticket_id) }}
-            </td>
-
-            <td>
-                {{ ticket.title }}
-            </td>
-
-            <td>
-                {{ ticket.status }}
-            </td>
-
-            <td>
-
-                <form action="/view-user-ticket" method="POST">
-
-                    <input
-                        type="hidden"
-                        name="ticket_id"
-                        value="{{ ticket.ticket_id }}">
-
-                    <button type="submit">
-                        View
-                    </button>
-
-                </form>
-
-            </td>
-
-        </tr>
-
-        {% endfor %}
-
-    </table>
-
-    {% else %}
-
-    <p>No tickets created yet.</p>
-
-    {% endif %}
+    <a href="/logout" class="sidebar-logout" data-tip="Logout">
+        <i class="ti ti-logout"></i>
+    </a>
+</div>
 
 
-    {% if selected_ticket %}
+<div class="page-wrap">
+<div class="container">
 
-    <hr>
+<div class="topbar">
+    <div>
+        <h1>User Dashboard</h1>
+        <p>Welcome, {{ username }}</p>
+    </div>
+    <div>
+        <a href="/create-ticket">
+            <button type="button">Create Ticket</button>
+        </a>
+    </div>
+</div>
 
-    <h2>Ticket Details</h2>
+<div class="stats-container">
+    <div class="stat-card">
+        <p>My Tickets</p>
+        <h2>{{ my_tickets_count }}</h2>
+    </div>
+    <div class="stat-card">
+        <p>Open</p>
+        <h2>{{ open_count }}</h2>
+    </div>
+    <div class="stat-card">
+        <p>Resolved</p>
+        <h2>{{ resolved_count }}</h2>
+    </div>
+</div>
 
-    <p>
-        <b>Ticket Code:</b>
-        TKT-{{ "%04d"|format(selected_ticket.ticket_id) }}
-    </p>
+<div class="card">
+<h2>My Tickets</h2>
+<br>
 
-    <p>
-        <b>Title:</b>
-        {{ selected_ticket.title }}
-    </p>
+{% if tickets %}
+<table>
+    <tr>
+        <th>Ticket Code</th>
+        <th>Title</th>
+        <th>Status</th>
+        <th>View</th>
+    </tr>
 
-    <p>
-        <b>Status:</b>
-        {{ selected_ticket.status }}
-    </p>
+    {% for ticket in tickets %}
+    <tr>
+        <td>TKT-{{ "%04d"|format(ticket.ticket_id) }}</td>
+        <td>{{ ticket.title }}</td>
+        <td>{{ ticket.status }}</td>
+        <td>
+            <form action="/view-user-ticket" method="POST">
+                <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}">
+                <button type="submit">View</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
 
-    <p>
-        <b>Description:</b>
-        {{ selected_ticket.description }}
-    </p>
+{% else %}
+<p>No tickets created yet.</p>
+{% endif %}
 
-    <hr>
+</div>
 
-    <h3>Comments</h3>
+<br>
 
-    {% if comments %}
+{% if selected_ticket %}
 
-        {% for comment in comments %}
+<button class="tab-btn" type="button" onclick="showTicket()">Ticket Details</button>
+<button class="tab-btn" type="button" onclick="showComments()">Comments</button>
 
-            <p>
-                <b>
-                    {{ comment.first_name }}
-                    {{ comment.last_name }}
-                    ({{ comment.comment_by_role }})
-                </b>
-                -
-                <small>{{ comment.comment_date }}</small>
-            </p>
+<br><br>
 
-            <p>
-                {{ comment.comment }}
-            </p>
+<div id="ticket-details">
+<h2>Ticket Details</h2>
+<p><b>Ticket Code:</b> TKT-{{ "%04d"|format(selected_ticket.ticket_id) }}</p>
+<p><b>Title:</b> {{ selected_ticket.title }}</p>
+<p><b>Description:</b> {{ selected_ticket.description }}</p>
+<p><b>Status:</b> {{ selected_ticket.status }}</p>
+</div>
 
-
-        {% endfor %}
-
-    {% else %}
-
-        <p>No comments yet.</p>
-
-    {% endif %}
-
-    <h3>Add Comment</h3>
-
+<div id="comments-section" style="display:none;">
+<h3>Comments</h3>
 <form action="/add-comment" method="POST">
-
-    <input type="hidden"
-           name="ticket_id"
-           value="{{ selected_ticket.ticket_id }}">
-
-    <textarea
-        name="comment"
-        rows="4"
-        cols="50"
-        placeholder="Write your comment here..."
-        required>
-    </textarea>
-
+    <input type="hidden" name="ticket_id" value="{{ selected_ticket.ticket_id }}">
+    <textarea name="comment" rows="4" placeholder="Write your comment here..." required></textarea>
     <br><br>
-
-    <button type="submit">
-        Add Comment
-    </button>
-
+    <button type="submit">Add Comment</button>
 </form>
 <br>
-    <a href="/dashboard">
-        <button type="button">
-            Hide Details
-        </button>
-    </a>
+<div class="comment-box">
+{% if comments %}
+    {% for comment in comments %}
+    <div class="comment-card">
+        <div class="comment-header">
+            <b>{{ comment.first_name }} {{ comment.last_name }} ({{ comment.comment_by_role }})</b>
+            <small>{{ comment.comment_date }}</small>
+        </div>
+        <div class="comment-body">{{ comment.comment }}</div>
+    </div>
+    {% endfor %}
+{% else %}
+    <p>No comments yet.</p>
+{% endif %}
+</div>
+</div>
 
-    {% endif %}
+<br>
+<a href="/dashboard"><button type="button">Hide Details</button></a>
 
+{% endif %}
+
+</div>
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

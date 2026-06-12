@@ -72,3 +72,14 @@ window.onload = function(){
         showTicket();
     }
 };
+
+setTimeout(function() {
+
+    const popups = document.querySelectorAll('.success-popup, .error-popup');
+
+    popups.forEach(function(popup) {
+        popup.style.opacity = '0';
+        popup.style.transition = '0.5s';
+    });
+
+}, 3000);

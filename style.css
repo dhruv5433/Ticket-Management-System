@@ -1,7 +1,3 @@
-/* ══════════════════════════════════
-   TMS — Dark Corporate Theme
-   ══════════════════════════════════ */
-
 *,*::before,*::after{box-sizing:border-box;}
 
 body{
@@ -20,7 +16,6 @@ h3{ color:#b0b0b0; }
 ::-webkit-scrollbar{ width:6px; }
 ::-webkit-scrollbar-thumb{ background:#2a2a2a; border-radius:10px; }
 
-/* ── SIDEBAR LAYOUT ── */
 .sidebar{
     position:fixed;
     top:0; left:0; bottom:0;
@@ -67,7 +62,6 @@ h3{ color:#b0b0b0; }
     color:#60a5fa;
 }
 
-/* tooltip on hover */
 .sidebar-link::after{
     content:attr(data-tip);
     position:absolute;
@@ -128,7 +122,6 @@ h3{ color:#b0b0b0; }
 
 .sidebar-logout:hover::after{ opacity:1; }
 
-/* ── PAGE WRAPPER (accounts for sidebar) ── */
 .page-wrap{
     margin-left:56px;
     min-height:100vh;
@@ -141,7 +134,6 @@ h3{ color:#b0b0b0; }
     padding:24px 20px;
 }
 
-/* ── TOPBAR ── */
 .topbar{
     display:flex;
     justify-content:space-between;
@@ -169,11 +161,9 @@ h3{ color:#b0b0b0; }
     letter-spacing:0.09em;
 }
 
-/* hide the old logout button inside topbar — logout is now sidebar */
 .topbar a button{ display:none; }
 .topbar > a{ display:none; }
 
-/* ── STAT CARDS — compact pills, right-aligned ── */
 .stats-container{
     display:flex;
     gap:8px;
@@ -208,7 +198,7 @@ h3{ color:#b0b0b0; }
 
 .stat-card p{
     margin:0;
-    color:#3a3a3a;
+    color:#e2e2e2;
     font-size:10px;
     text-transform:uppercase;
     letter-spacing:0.09em;
@@ -219,7 +209,6 @@ h3{ color:#b0b0b0; }
 .stat-card:nth-child(2) h2{ color:#d97706; }
 .stat-card:nth-child(3) h2{ color:#4ade80; }
 
-/* ── MAIN CARD ── */
 .card{
     background:#111;
     padding:20px;
@@ -228,7 +217,6 @@ h3{ color:#b0b0b0; }
     margin-top:16px;
 }
 
-/* ── BUTTONS ── */
 button{
     background:#161616;
     color:#9ca3af;
@@ -271,7 +259,6 @@ button:hover{
     color:#d4d4d4;
 }
 
-/* ── TABLE ── */
 table{
     width:100%;
     border-collapse:collapse;
@@ -302,7 +289,6 @@ td{
 tr:nth-child(even){ background:transparent; }
 tr:hover td{ background:#141414; }
 
-/* ── FORMS ── */
 label{
     font-size:11px;
     color:#444;
@@ -330,7 +316,6 @@ input:focus,textarea:focus,select:focus{
 
 input::placeholder,textarea::placeholder{ color:#333; }
 
-/* ── AUTH CARD ── */
 .auth-card{
     width:400px;
     margin:80px auto;
@@ -349,7 +334,6 @@ input::placeholder,textarea::placeholder{ color:#333; }
     letter-spacing:-0.2px;
 }
 
-/* ── TICKET DETAIL SECTIONS ── */
 #ticket-details,
 #user-info,
 #comments-section,
@@ -361,7 +345,6 @@ input::placeholder,textarea::placeholder{ color:#333; }
     border:1px solid #1e1e1e;
 }
 
-/* ── COMMENT BOX ── */
 .comment-box{
     max-height:300px;
     overflow-y:auto;
@@ -417,32 +400,20 @@ input::placeholder,textarea::placeholder{ color:#333; }
     line-height:1.6;
 }
 
-/* ── STATUS CLASSES ── */
 .status-open{ color:#60a5fa; font-weight:600; }
 .status-pending{ color:#d97706; font-weight:600; }
 .status-resolved{ color:#4ade80; font-weight:600; }
 .status-closed{ color:#3a3a3a; font-weight:600; }
 .status-escalated{ color:#f87171; font-weight:600; }
 
-/* =========================================
-   UI POLISH UPDATE
-   Add at bottom of style.css
-========================================= */
-
-/* Better Sidebar Logo */
-
 .sidebar-brand{
     background:#2563eb !important;
     box-shadow:0 0 12px rgba(37,99,235,0.35);
 }
 
-/* Better Welcome Text */
-
 .topbar p{
     color:#6b7280 !important;
 }
-
-/* Slightly Premium Borders */
 
 .card,
 .stat-card,
@@ -454,13 +425,9 @@ input::placeholder,textarea::placeholder{ color:#333; }
     border:1px solid #232323 !important;
 }
 
-/* Active Sidebar Highlight */
-
 .sidebar-link.active{
-    box-shadow:inset 3px 0 0 #60a5fa;
+    box-shadow:inset 3px 0 0 #e2e2e2;
 }
-
-/* Dashboard Cards Accent Line */
 
 .stat-card{
     position:relative;
@@ -487,26 +454,18 @@ input::placeholder,textarea::placeholder{ color:#333; }
     background:#4ade80;
 }
 
-/* Better Comment Header */
-
 .comment-header{
     background:#181818 !important;
 }
-
-/* Slight Hover Effect */
 
 .card:hover,
 .stat-card:hover{
     border-color:#2d2d2d;
 }
 
-/* Better Table Hover */
-
 tr:hover td{
     background:#171717;
 }
-
-/* View Button Styling */
 
 .view-btn{
     background:#1d4ed8 !important;
@@ -530,8 +489,6 @@ tr:hover td{
     background:#3b82f6 !important;
 }
 
-/* Logout Button */
-
 .logout-btn{
     background:#7f1d1d !important;
     border:1px solid #991b1b !important;
@@ -542,8 +499,6 @@ tr:hover td{
     background:#991b1b !important;
 }
 
-/* Better Scrollbar */
-
 ::-webkit-scrollbar-thumb{
     background:#2f2f2f;
 }
@@ -552,17 +507,9 @@ tr:hover td{
     background:#404040;
 }
 
-/* =========================
-   PREMIUM CORPORATE TOUCH
-========================= */
-
-/* Smooth transitions */
-
 *{
     transition: all 0.2s ease;
 }
-
-/* Cards */
 
 .card,
 .stat-card,
@@ -574,22 +521,16 @@ tr:hover td{
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
-/* Card hover */
-
 .card:hover,
 .stat-card:hover{
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0,0,0,0.12);
 }
 
-/* Buttons */
-
 button{
     font-weight: 600;
     letter-spacing: 0.3px;
 }
-
-/* Table */
 
 table{
     border-collapse: separate;
@@ -600,13 +541,10 @@ tbody tr:hover{
     background: rgba(255,255,255,0.03);
 }
 
-/* Section titles */
 
 h1,h2,h3{
     letter-spacing: 0.4px;
 }
-
-/* Inputs */
 
 input,
 textarea,
@@ -621,8 +559,6 @@ select:focus{
     box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
 }
 
-/* Status glow */
-
 .status-open{
     box-shadow: 0 0 8px rgba(59,130,246,0.15);
 }
@@ -635,7 +571,6 @@ select:focus{
     box-shadow: 0 0 8px rgba(34,197,94,0.15);
 }
 
-/* Comment header */
 
 .comment-header td:first-child{
     border-left: 5px solid #3b82f6;
@@ -699,10 +634,6 @@ select:focus{
     font-weight:600;
 }
 
-/* =====================================
-   TOPBAR IMPROVEMENT
-===================================== */
-
 .topbar{
 
     background:#1f1f23 !important;
@@ -720,8 +651,6 @@ select:focus{
     box-shadow:0 6px 18px rgba(0,0,0,0.25);
 }
 
-/* Dashboard Title */
-
 .topbar h1{
 
     color:#f8fafc !important;
@@ -732,8 +661,6 @@ select:focus{
 
     margin-bottom:6px;
 }
-
-/* Welcome Text */
 
 .topbar p{
 
@@ -748,8 +675,6 @@ select:focus{
     text-transform:none;
 }
 
-/* Better Table Headers */
-
 th{
 
     color:#cbd5e1 !important;
@@ -758,10 +683,6 @@ th{
 
     letter-spacing:0.5px;
 }
-
-/* =====================================
-   TABLE UI UPGRADE
-===================================== */
 
 table{
     border-collapse:separate !important;
@@ -814,10 +735,6 @@ table th{
     background:#3b82f6 !important;
 }
 
-/* =========================
-   TICKET NAVIGATION
-========================= */
-
 .tab-btn{
 
     display:block !important;
@@ -851,3 +768,124 @@ table th{
 
     border-color:#2563eb;
 }
+
+.attachment-link{
+
+    color:#60a5fa;
+
+    text-decoration:none;
+
+    font-weight:600;
+}
+
+.attachment-link:hover{
+
+    color:#93c5fd;
+}
+
+.success-popup{
+    position: fixed;
+
+    top: 20px;
+
+    left: calc(50% + 35px);
+
+    transform: translateX(-50%);
+
+    background: #22c55e;
+    color: white;
+
+    padding: 12px 25px;
+
+    border-radius: 10px;
+
+    z-index: 9999;
+
+    font-weight: 600;
+}
+
+.search-form{
+    display:flex;
+    gap:10px;
+    margin-bottom:20px;
+}
+
+.search-form input{
+    flex:1;
+    padding:12px;
+    border-radius:8px;
+    border:1px solid #4444;
+    background:#1f1f1f;
+    color:white;
+}
+
+.search-form button{
+    padding:12px 20px;
+}
+
+.search-form ::placeholder{
+    color: #cbd5e1;
+}
+
+.error-popup{
+
+    background:#ef4444;
+
+    color:white;
+
+    padding:12px;
+
+    border-radius:8px;
+
+    margin-bottom:15px;
+
+    font-weight:600;
+
+    text-align:center;
+}
+
+label{
+    color: #e2e2e2;
+}
+
+.success-popup,
+.error-popup{
+    transition: 0.5s;
+}
+
+.progress-strip {
+    margin: 12px 0 20px 0;
+    width: fit-content;
+    min-width: 400px;
+    margin-left: auto;
+}
+
+.progress-bar {
+    display: flex;
+    width: 100%;
+    height: 8px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #1e1e2e;
+}
+
+.progress-segment {
+    height: 100%;
+    transition: width 0.6s ease;
+}
+
+.seg-assigned { background: #4a90e2; }
+.seg-pending  { background: #f5a623; }
+.seg-resolved { background: #2ecc71; }
+
+.progress-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.lbl-assigned { color: #4a90e2; }
+.lbl-pending  { color: #f5a623; }
+.lbl-resolved { color: #2ecc71; }

@@ -3,6 +3,8 @@ import sqlite3
 from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
+from flask import send_from_directory
+from flask import flash
 
 app = Flask(__name__)
 
@@ -55,7 +57,8 @@ def login():
         elif role == 'L3':
             return redirect('/l3-dashboard')
 
-    return "Invalid Employee ID or Password"
+    flash("Invalid Employee ID or Password")
+    return redirect('/')
 
 @app.route('/create-ticket')
 def create_ticket():
@@ -126,6 +129,8 @@ def submit_ticket():
 
     conn.commit()
     conn.close()
+
+    flash("Ticket Submitted Successfully!")
 
     return redirect('/dashboard')
 
@@ -219,10 +224,22 @@ def dashboard():
 
     cursor = conn.cursor()
 
-    cursor.execute(
-        "SELECT * FROM tickets WHERE created_by=?",
-        (session['user_id'],)
-    )
+    search = request.args.get('search', '')
+
+    cursor.execute("""
+    SELECT *
+    FROM tickets
+    WHERE created_by = ?
+    AND (
+    ticket_code LIKE ?
+    OR title LIKE ?
+                  )
+    """,
+(
+    session['user_id'],
+    f"%{search}%",
+    f"%{search}%"
+))
 
     tickets = cursor.fetchall()
 
@@ -263,15 +280,26 @@ def l1_dashboard():
 
     cursor = conn.cursor()
 
-    cursor.execute(
-    """
-    SELECT * FROM tickets
-    WHERE assigned_to=?
-    """,
-    (session['user_id'],)
-    )
+    search = request.args.get('search', '')
+
+    cursor.execute("""
+    SELECT *
+    FROM tickets
+    WHERE assigned_to = ?
+    AND (
+    ticket_code LIKE ?
+    OR title LIKE ?
+          )
+""",
+(
+    session['user_id'],
+    f"%{search}%",
+    f"%{search}%"
+))
 
     tickets = cursor.fetchall()
+
+    
 
     assigned_count = len(tickets)
 
@@ -293,7 +321,8 @@ def l1_dashboard():
         tickets=tickets,
         assigned_count=assigned_count,
         pending_count=pending_count,
-        resolved_count=resolved_count
+        resolved_count=resolved_count,
+        search=search
     )
 
 @app.route('/update-ticket', methods=['POST'])
@@ -571,6 +600,14 @@ def view_user_ticket():
         my_tickets_count=my_tickets_count,
         open_count=open_count,
         resolved_count=resolved_count
+    )
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+
+    return send_from_directory(
+        'uploads',
+        filename
     )
 
 if __name__ == '__main__':

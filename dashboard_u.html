@@ -7,16 +7,21 @@
 </head>
 <body>
 
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+
+<div class = "success-popup">
+    {{ messages[0] }}
+</div>
+
+{% endif %}
+{% endwith %}
 
 <div class="sidebar">
     <div class="sidebar-brand">T</div>
 
     <a href="/dashboard" class="sidebar-link active" data-tip="Dashboard">
         <i class="ti ti-layout-dashboard"></i>
-    </a>
-
-    <a href="/dashboard" class="sidebar-link" data-tip="My Tickets">
-        <i class="ti ti-ticket"></i>
     </a>
 
     <a href="/create-ticket" class="sidebar-link" data-tip="Create Ticket">
@@ -60,9 +65,33 @@
         <h2>{{ resolved_count }}</h2>
     </div>
 </div>
+<div class="progress-strip">
+    <div class="progress-bar">
+        <div class="progress-segment seg-assigned" id="seg-assigned"></div>
+        <div class="progress-segment seg-pending" id="seg-pending"></div>
+        <div class="progress-segment seg-resolved" id="seg-resolved"></div>
+    </div>
+    <div class="progress-labels">
+        <span class="lbl-assigned" id="lbl-assigned"></span>
+        <span class="lbl-pending" id="lbl-pending"></span>
+        <span class="lbl-resolved" id="lbl-resolved"></span>
+    </div>
+</div>
 
 <div class="card">
 <h2>My Tickets</h2>
+<br>
+
+<form method="GET" action="/dashboard" class="search-form">
+    <input
+        type="text"
+        name="search"
+        value="{{search}}"
+        placeholder="Search Ticket Code or Title">
+
+    <button type="submit">Search</button>
+</form>
+
 <br>
 
 {% if tickets %}
@@ -78,7 +107,45 @@
     <tr>
         <td>TKT-{{ "%04d"|format(ticket.ticket_id) }}</td>
         <td>{{ ticket.title }}</td>
-        <td>{{ ticket.status }}</td>
+        <td><td>
+
+{% if ticket.status == 'Open' %}
+
+<span class="status-open">
+    OPEN
+</span>
+
+{% elif ticket.status == 'Pending User Response' %}
+
+<span class="status-pending">
+    PENDING
+</span>
+
+{% elif ticket.status == 'In Progress' %}
+
+<span class="status-progress">
+    IN PROGRESS
+</span>
+
+{% elif ticket.status == 'Resolved' %}
+
+<span class="status-resolved">
+    RESOLVED
+</span>
+
+{% elif ticket.status == 'Closed' %}
+
+<span class="status-closed">
+    CLOSED
+</span>
+
+{% else %}
+
+{{ ticket.status }}
+
+{% endif %}
+
+</td>
         <td>
             <form action="/view-user-ticket" method="POST">
                 <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}">
@@ -110,7 +177,15 @@
 <p><b>Title:</b> {{ selected_ticket.title }}</p>
 <p><b>Description:</b> {{ selected_ticket.description }}</p>
 <p><b>Status:</b> {{ selected_ticket.status }}</p>
+{% if selected_ticket.attachment %}
+<p><b>Attachment:</b>
+<a class="attachment-link" href="/uploads/{{ selected_ticket.attachment }}"
+       target="_blank"> View Attachment </a></p>
+{% else %}
+<p><b>Attachment:</b>
+No Attachment Uploaded</p>
 </div>
+{% endif %}
 
 <div id="comments-section" style="display:none;">
 <h3>Comments</h3>
@@ -145,6 +220,7 @@
 
 </div>
 </div>
+
 
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>

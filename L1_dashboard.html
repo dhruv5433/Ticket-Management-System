@@ -14,18 +14,6 @@
         <i class="ti ti-layout-dashboard"></i>
     </a>
 
-    <a href="/l1-dashboard" class="sidebar-link" data-tip="Tickets">
-        <i class="ti ti-ticket"></i>
-    </a>
-
-    <a href="#" class="sidebar-link" data-tip="Users">
-        <i class="ti ti-users"></i>
-    </a>
-
-    <a href="#" class="sidebar-link" data-tip="Reports">
-        <i class="ti ti-chart-bar"></i>
-    </a>
-
     <div class="sidebar-spacer"></div>
 
     <a href="/logout" class="sidebar-logout" data-tip="Logout">
@@ -59,8 +47,33 @@
     </div>
 </div>
 
+<div class="progress-strip">
+    <div class="progress-bar">
+        <div class="progress-segment seg-assigned" id="seg-assigned"></div>
+        <div class="progress-segment seg-pending" id="seg-pending"></div>
+        <div class="progress-segment seg-resolved" id="seg-resolved"></div>
+    </div>
+    <div class="progress-labels">
+        <span class="lbl-assigned" id="lbl-assigned"></span>
+        <span class="lbl-pending" id="lbl-pending"></span>
+        <span class="lbl-resolved" id="lbl-resolved"></span>
+    </div>
+</div>
+
 <div class="card">
 <h2>Assigned Tickets</h2>
+
+<form method="GET" action="/l1-dashboard" class="search-form">
+    <input
+        type="text"
+        name="search"
+        value="{{search}}"
+        placeholder="Search Ticket Code or Title">
+
+    <button type="submit">Search</button>
+</form>
+
+<br>
 
 <table>
 <tr>
@@ -143,6 +156,14 @@
 <p><b>Title:</b> {{ selected_ticket.title }}</p>
 <p><b>Description:</b> {{ selected_ticket.description }}</p>
 <p><b>Status:</b> {{ selected_ticket.status }}</p>
+{% if selected_ticket.attachment %}
+<p><b>Attachment:</b>
+<a class="attachment-link" href="/uploads/{{ selected_ticket.attachment }}"
+       target="_blank"> View Attachment </a></p>
+{% else %}
+<p><b>Attachment:</b>
+No Attachment Uploaded</p>
+{% endif %}
 </div>
 
 <div id="user-info" style="display:none;">
@@ -203,5 +224,29 @@
 </div>
 
 <script src="{{ url_for('static', filename='script.js') }}"></script>
+<script>
+function updateProgressBar() {
+    const assigned = parseInt("{{ assigned_count }}") || 0;
+    const pending  = parseInt("{{ pending_count }}")  || 0;
+    const resolved = parseInt("{{ resolved_count }}") || 0;
+    const total = assigned + pending + resolved;
+
+    if (total === 0) return;
+
+    const aPct = ((assigned / total) * 100).toFixed(1);
+    const pPct = ((pending  / total) * 100).toFixed(1);
+    const rPct = ((resolved / total) * 100).toFixed(1);
+
+    document.getElementById("seg-assigned").style.width = aPct + "%";
+    document.getElementById("seg-pending").style.width  = pPct + "%";
+    document.getElementById("seg-resolved").style.width = rPct + "%";
+
+    document.getElementById("lbl-assigned").textContent = "Assigned " + aPct + "%";
+    document.getElementById("lbl-pending").textContent  = "Pending "  + pPct + "%";
+    document.getElementById("lbl-resolved").textContent = "Resolved " + rPct + "%";
+}
+
+updateProgressBar();
+</script>
 </body>
 </html>
